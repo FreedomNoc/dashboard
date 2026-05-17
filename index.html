@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>NOC Dashboard</title>
+
+<style>
+
+body{
+    background:#111;
+    color:white;
+    font-family:Arial;
+    padding:20px;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:14px;
+}
+
+th{
+    background:#222;
+    color:white;
+    padding:10px;
+    border:1px solid #333;
+}
+
+td{
+    padding:10px;
+    border:1px solid #333;
+}
+
+tr:nth-child(even){
+    background:#1a1a1a;
+}
+
+.Resolved{
+    color:lime;
+    font-weight:bold;
+}
+
+.Problem{
+    color:red;
+    font-weight:bold;
+}
+
+.Draft{
+    color:orange;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>NOC Dashboard</h1>
+
+<table id="dashboard"></table>
+
+<script>
+
+fetch('data.csv')
+.then(response => response.text())
+.then(data => {
+
+    const rows = data.trim().split('\n');
+
+    let html = '';
+
+    rows.forEach((row, index) => {
+
+        const cols = row.split(';');
+
+        html += '<tr>';
+
+        cols.forEach((col, i) => {
+
+            col = col.replace(/"/g,'');
+
+            if(index === 0){
+
+                html += `<th>${col}</th>`;
+
+            } else {
+
+                if(i === 1){
+
+                    html += `<td class="${col}">${col}</td>`;
+
+                } else {
+
+                    html += `<td>${col}</td>`;
+
+                }
+
+            }
+
+        });
+
+        html += '</tr>';
+
+    });
+
+    document.getElementById('dashboard').innerHTML = html;
+
+});
+
+</script>
+
+</body>
+</html>
