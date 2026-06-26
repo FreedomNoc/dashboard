@@ -14,13 +14,19 @@ body{
 }
 
 h1{
-    margin-bottom:20px;
+    margin-bottom:25px;
+}
+
+h2{
+    margin-top:35px;
+    margin-bottom:15px;
 }
 
 table{
     width:100%;
     border-collapse:collapse;
     font-size:14px;
+    margin-bottom:35px;
 }
 
 th{
@@ -55,47 +61,58 @@ tr:nth-child(even){
 }
 
 </style>
+
 </head>
 
 <body>
 
 <h1>NOC Dashboard</h1>
 
+<h2 style="color:#ff4d4d;">🔴 Критичные аварии</h2>
+
 <table id="dashboard"></table>
+
+<h2 style="color:#66ff66;">🟢 Плановые работы</h2>
+
+<table id="maintenance"></table>
 
 <script>
 
-fetch('data.csv?v=' + new Date().getTime())
-.then(response => response.text())
-.then(data => {
+function loadTable(file,id){
 
-    const rows = data.trim().split('\n');
+fetch(file + "?v=" + new Date().getTime())
 
-    let html = '';
+.then(response=>response.text())
 
-    rows.forEach((row, index) => {
+.then(data=>{
 
-        const cols = row.split(';');
+    const rows=data.trim().split('\n');
 
-        html += '<tr>';
+    let html='';
 
-        cols.forEach((col, i) => {
+    rows.forEach((row,index)=>{
 
-            col = col.replace(/"/g,'');
+        const cols=row.split(';');
 
-            if(index === 0){
+        html+="<tr>";
 
-                html += `<th>${col}</th>`;
+        cols.forEach((col,i)=>{
 
-            } else {
+            col=col.replace(/"/g,'');
 
-                if(i === 1){
+            if(index===0){
 
-                    html += `<td class="${col}">${col}</td>`;
+                html+=`<th>${col}</th>`;
 
-                } else {
+            }else{
 
-                    html += `<td>${col}</td>`;
+                if(i===1){
+
+                    html+=`<td class="${col}">${col}</td>`;
+
+                }else{
+
+                    html+=`<td>${col}</td>`;
 
                 }
 
@@ -103,13 +120,28 @@ fetch('data.csv?v=' + new Date().getTime())
 
         });
 
-        html += '</tr>';
+        html+="</tr>";
 
     });
 
-    document.getElementById('dashboard').innerHTML = html;
+    document.getElementById(id).innerHTML=html;
+
+})
+
+.catch(error=>{
+
+    document.getElementById(id).innerHTML=
+    "<tr><td style='padding:15px;color:red;'>Не удалось загрузить "+file+"</td></tr>";
+
+    console.error(error);
 
 });
+
+}
+
+loadTable("data.csv","dashboard");
+
+loadTable("maintenance.csv","maintenance");
 
 </script>
 
